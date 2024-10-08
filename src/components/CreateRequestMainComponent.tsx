@@ -1,20 +1,17 @@
-// CreateRequestMainComponent.tsx
 import React, { useState } from "react";
 import { Button } from "flowbite-react";
 import { HiPlus, HiTrash } from "react-icons/hi";
-import axios from 'axios'; // Import axios for making API requests
-
-interface CreateRequestMainComponentProps {}
 
 interface ValidUrl {
   url: string;
   value: string;
 }
 
-export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProps> = () => {
+export const CreateRequestMainComponent: React.FC = () => {
   const [urlInputs, setUrlInputs] = useState<string[]>([""]);
   const [urlErrors, setUrlErrors] = useState<string[]>([""]); // For tracking individual field errors
   const [error, setError] = useState<string>("");
+
   const handleAddUrl = () => {
     if (urlInputs.length < 10) { // Limit to 10 URLs
       setUrlInputs([...urlInputs, ""]); // Add a new empty string to the array for a new input box
@@ -33,7 +30,6 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
     setUrlErrors(updatedErrors);
   };
 
-  // Remove the input box at the specified index
   const handleDeleteInput = (index: number) => {
     const updatedInputs = urlInputs.filter((_, i) => i !== index); // Remove input at that index
     const updatedErrors = urlErrors.filter((_, i) => i !== index); // Remove corresponding error
@@ -41,19 +37,16 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
     setUrlErrors(updatedErrors);
   };
 
-  // Function to validate Google Drive URLs
   const validateUrl = (url: string) => {
     const googleDriveRegex = /^(https?:\/\/)?(drive\.google\.com|docs\.google\.com)\/.*$/;
     return googleDriveRegex.test(url);
   };
 
-  // Function to save URLs to the database
   const handleSaveUrls = async () => {
     setError(""); // Reset general error message
     const validUrls: ValidUrl[] = []; // Specify the type of validUrls
     const updatedErrors = [...urlErrors];
 
-    // Validate each URL and update the error state
     urlInputs.forEach((url, index) => {
       if (validateUrl(url)) {
         validUrls.push({ url: `entry-${index + 1}`, value: url.split('/').pop()! });
@@ -65,13 +58,12 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
 
     setUrlErrors(updatedErrors); // Update the error state
 
-    // Check if all URLs are valid
     const allValid = validUrls.length === urlInputs.length && validUrls.length > 0;
     if (allValid) {
       try {
+        // Uncomment this when ready to use the API
         // const response = await axios.post('http://localhost:5000/api/urls', { urls: validUrls });
         alert(JSON.stringify({ urls: validUrls })); 
-        // console.log(response.data.message);
         setUrlInputs([""]);
         setUrlErrors([""]);
       } catch (error) {
@@ -116,14 +108,11 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
                 <input
                   type="text"
                   id={`video-url-${index}`}
-                  className={`mt-1 p-2 block w-full border rounded-md shadow-sm sm:text-sm pr-10 ${
-                    urlErrors[index] ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`mt-1 p-2 block w-full border rounded-md shadow-sm sm:text-sm pr-10 ${urlErrors[index] ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder={`Enter video URL ${index + 1}`}
                   value={url}
                   onChange={(e) => handleInputChange(index, e.target.value)}
                 />
-                {/* Show the delete icon on the right side to remove the input box */}
                 <button
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-red-600"
                   onClick={() => handleDeleteInput(index)}
@@ -132,7 +121,7 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
                 </button>
               </div>
               {urlErrors[index] && (
-                <p className="text-red-500 text-xs">{urlErrors[index]}</p> // Show individual error message
+                <p className="text-red-500 text-xs">{urlErrors[index]}</p>
               )}
             </div>
           </div>
@@ -152,9 +141,7 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
             </span>
           </Button>
         </div>
-        {/*  */}
-        {/*  */}
-        {/* Show error message if any */}
+
         {error && <p className="text-red-500">{error}</p>}
       </div>
 
@@ -162,7 +149,7 @@ export const CreateRequestMainComponent: React.FC<CreateRequestMainComponentProp
         <Button
           color="primary"
           className="text-sm font-medium bg-purple-700 hover:bg-purple-800"
-          onClick={handleSaveUrls} // Call the save function on button click
+          onClick={handleSaveUrls}
         >
           Create Request
         </Button>
